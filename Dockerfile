@@ -1,33 +1,27 @@
-# Use a lightweight JDK image
-FROM eclipse-temurin:17-jdk-alpine AS build
-
-# Set working directory
+# Use an official Maven image to build the project
+FROM maven:3.9.8-eclipse-temurin-17 AS builder
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml
-COPY mvnw .
-COPY .mvn .mvn
+# Copy pom.xml and download dependencies first (for caching)
 COPY pom.xml .
+RUN mvn dependency:go-offline
 
-# Download dependencies
-RUN ./mvnw dependency:go-offline
-
-# Copy source code
+# Copy source code and build the jar
 COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Build the application
-RUN ./mvnw package -DskipTests
-
-# Final runtime image
+# Use a lightweight JDK runtime for the final image
 FROM eclipse-temurin:17-jdk-alpine
-
 WORKDIR /app
 
-# Copy JAR file from builder stage
-COPY --from=build /app/target/*.jar app.jar
+# Copy the built jar from the builder stage
+COPY --from=builder /app/target/*.jar app.jar
 
-# Expose port (Render will auto-detect)
+# Set environment variable for Render to use
+ENV PORT=8088
+
+# Expose the port
 EXPOSE 8088
 
-# Run the app
+# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
