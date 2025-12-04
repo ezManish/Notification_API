@@ -14,4 +14,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     // Optional: get all notifications sent by a vendor/admin
     List<Notification> findBySenderId(Long senderId);
+
+    // Delete all notifications for a receiver
+    void deleteByReceiverId(Long receiverId);
 }

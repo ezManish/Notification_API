@@ -28,4 +28,25 @@ public class NotificationController {
         List<Notification> notifications = notificationService.getNotificationsForUser(receiverId);
         return ResponseEntity.ok(notifications);
     }
+
+    // ✅ API 3: Mark notification as read
+    @PatchMapping("/{id}/read")
+    public ResponseEntity<Notification> markNotificationRead(@PathVariable Long id) {
+        Notification updated = notificationService.markNotificationRead(id);
+        return ResponseEntity.ok(updated);
+    }
+
+    // ✅ API 4: Delete a notification
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteNotification(@PathVariable Long id) {
+        notificationService.deleteNotification(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ✅ API 5: Clear all notifications for a user
+    @DeleteMapping("/user/{userId}/all")
+    public ResponseEntity<Void> clearAllNotifications(@PathVariable Long userId) {
+        notificationService.clearAllNotifications(userId);
+        return ResponseEntity.noContent().build();
+    }
 }

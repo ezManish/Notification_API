@@ -15,12 +15,15 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long senderId;     // vendor/admin userId
-    private Long receiverId;   // student userId
+    private Long senderId; // vendor/admin userId
+    private Long receiverId; // student userId
     private String message;
 
     @Enumerated(EnumType.STRING)
     private NotificationType type; // ORDER_CONFIRMED, READY_TO_PICKUP, etc.
 
     private LocalDateTime timestamp;
+
+    @Builder.Default
+    private boolean isRead = false;
 }
